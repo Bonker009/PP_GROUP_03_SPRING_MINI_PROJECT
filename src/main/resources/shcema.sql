@@ -43,3 +43,7 @@ CREATE TABLE Otps
     user_id    uuid,
     FOREIGN KEY (user_id) REFERENCES Users (user_id) ON DELETE CASCADE
 );
+
+
+UPDATE categories SET name = '#{request.name}' , description = '#{request.description}', user_id = '019a543e-c1ec-4cc9-8cda-e112ef0acefd'
+WHERE category_id = '9bf1f8df-d204-44ad-985f-415bb5167871' AND user_id = '019a543e-c1ec-4cc9-8cda-e112ef0acefd'  RETURNING category_id

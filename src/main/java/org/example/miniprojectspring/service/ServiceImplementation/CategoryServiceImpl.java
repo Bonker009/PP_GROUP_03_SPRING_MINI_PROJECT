@@ -24,6 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryById(UUID userId,UUID categoryId) {
+
+//        updateCategoryById(userId, categoryId, new CategoryRequest("asd", "asdasd"));
         return categoryRepository.getCategoryById(userId,categoryId);
     }
 
@@ -35,7 +37,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category updateCategoryById(UUID categoryId,UUID userId, CategoryRequest request) {
-        return categoryRepository.updateCategoryById(categoryId,userId,request);
+//        System.out.println(request + " request");
+//        System.out.println(categoryId+ " and " + userId);
+        Category category =categoryRepository.updateCategoryById(userId,categoryId,request);
+
+        return category;
     }
 
     @Override

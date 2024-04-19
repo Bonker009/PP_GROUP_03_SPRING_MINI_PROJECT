@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface CategoryRepository {
     @Results(id = "category", value = {
             @Result(property = "categoryId", column = "category_id",javaType = UUID.class, jdbcType = JdbcType.OTHER, typeHandler = UUIDTypeHandler.class),
+
             @Result(property = "userDTO", column = "user_id",javaType = UUID.class, jdbcType = JdbcType.OTHER, typeHandler = UUIDTypeHandler.class,
                     one = @One(select = "org.example.miniprojectspring.repository.AppUserRepository.findUserById")
             )
@@ -31,9 +32,11 @@ public interface CategoryRepository {
     Category deleteCategoryById(@Param("categoryId") UUID categoryId);
 
     @Select("""
-             UPDATE categories SET name = #{request.name} , description = #{request.description} WHERE category_id = #{categoryId} AND user_id =#{userId} RETURNING *
+             UPDATE categories SET name = #{request.name} , description = #{request.description}
+             WHERE category_id = #{categoryId} AND user_id = #{userId} RETURNING *
             """)
-    @ResultMap("category")
+            @Result(property = "categoryId", column = "category_id")
+//    @ResultMap("category")
     Category updateCategoryById(UUID userId,UUID categoryId, @Param("request") CategoryRequest request);
 
     @Select("""
