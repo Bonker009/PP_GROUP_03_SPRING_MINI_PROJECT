@@ -19,10 +19,19 @@ public interface ExpenseRepository {
     @Select("""
             SELECT * FROM expenses WHERE user_id = #{userId}
             """)
-
     List<Expense> getAllExpenses(UUID userId,Integer page, Integer size);
 
-    Expense getExpenseById(UUID id);
+//    @Select("""
+//    SELECT * FROM expenses WHERE expense_id= #{expenseId}::uuid;
+//    """)
+//    @ResultMap("expensesMapping")
+//    Expense findExpenseById(@Param("expenseId") UUID expenseId);
+
+    @Select("""
+    SELECT * FROM expenses WHERE expense_id = #{expenseId}::uuid;
+    """)
+    @ResultMap("expenseMapping")
+    Expense getExpenseById(@Param("expenseId") UUID expenseId);
 
     Expense createExpense(ExpenseRequest request);
 
