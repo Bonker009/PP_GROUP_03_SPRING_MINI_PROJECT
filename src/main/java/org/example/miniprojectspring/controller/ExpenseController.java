@@ -2,6 +2,7 @@ package org.example.miniprojectspring.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -63,7 +64,7 @@ public class ExpenseController {
 
     @PostMapping
     @Operation(summary = "Create new Expense")
-    public ResponseEntity<?> createExpense(@RequestBody ExpenseRequest request) {
+    public ResponseEntity<?> createExpense(@Valid @RequestBody ExpenseRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
@@ -79,7 +80,7 @@ public class ExpenseController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update Expense by Id")
-    public ResponseEntity<?> updateExpenseById(@PathVariable UUID id, @RequestBody ExpenseRequest request) {
+    public ResponseEntity<?> updateExpenseById(@PathVariable UUID id,@Valid  @RequestBody ExpenseRequest request) {
         Expense expense = expenseService.updateExpenseById(id, request);
         ApiResponse<Expense> apiResponse = ApiResponse.<Expense>builder()
                 .payload(expense)

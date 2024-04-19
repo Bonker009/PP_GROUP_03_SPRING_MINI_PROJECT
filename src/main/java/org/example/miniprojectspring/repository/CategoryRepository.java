@@ -32,15 +32,17 @@ public interface CategoryRepository {
     Category deleteCategoryById(@Param("categoryId") UUID categoryId);
 
     @Select("""
-             UPDATE categories SET name = #{request.name} , description = #{request.description}
-             WHERE category_id = #{categoryId} AND user_id = #{userId} RETURNING *
+            UPDATE categories
+            SET name = #{request.name}, description = #{request.description} 
+            WHERE category_id = #{categoryId} 
+            RETURNING *
             """)
             @Result(property = "categoryId", column = "category_id")
 //    @ResultMap("category")
     Category updateCategoryById(UUID userId,UUID categoryId, @Param("request") CategoryRequest request);
 
     @Select("""
-            INSERT INTO categories (name, description, user_id) VALUES (#{request.name},#{request.description},#{userId}) RETURNING *
+            INSERT INTO categories (name, description, user_id) VALUES (#{request.name},#{request.description},#{userId.userId}) RETURNING *
             """)
     @ResultMap("category")
     Category createNewCategory(@Param("request") CategoryRequest request, @Param("userId") UUID userId);

@@ -28,7 +28,7 @@ public interface ExpenseRepository {
     Expense getExpenseById (@Param("expenseId") UUID expenseId);
 
     @Select("""
-    INSERT INTO expenses (amount, description, date, user_id, category_id) 
+    INSERT INTO expenses (amount, description, date, user_id, category_id)
      VALUES (#{expenses.amount}, #{expenses.description}, #{expenses.date}, #{userId}, #{expenses.categoryId})
      RETURNING *
     """)

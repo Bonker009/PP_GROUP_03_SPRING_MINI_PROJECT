@@ -1,5 +1,6 @@
 package org.example.miniprojectspring.service.ServiceImplementation;
 
+import org.example.miniprojectspring.exception.SearchNotFoundException;
 import org.example.miniprojectspring.model.entity.Category;
 import org.example.miniprojectspring.model.request.CategoryRequest;
 import org.example.miniprojectspring.repository.CategoryRepository;
@@ -23,24 +24,29 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCategoryById(UUID userId,UUID categoryId) {
-
-//        updateCategoryById(userId, categoryId, new CategoryRequest("asd", "asdasd"));
-        return categoryRepository.getCategoryById(userId,categoryId);
+    public Category getCategoryById(UUID userId,UUID categoryId) throws SearchNotFoundException {
+        Category category = categoryRepository.getCategoryById(userId,categoryId);
+        if (category == null) {
+            throw new SearchNotFoundException("Category not found with id: " + categoryId + " not found.");
+        }
+        return category;
     }
 
     @Override
     public Category deleteCategoryById(UUID categoryId) {
-        System.out.println(categoryId + " in service impl");
-        return categoryRepository.deleteCategoryById(categoryId);
+        Category category =  categoryRepository.deleteCategoryById(categoryId);
+        if (category == null) {
+            throw new SearchNotFoundException("Category not found with id: " + categoryId + " not found.");
+        }
+        return category;
     }
 
     @Override
     public Category updateCategoryById(UUID categoryId,UUID userId, CategoryRequest request) {
-//        System.out.println(request + " request");
-//        System.out.println(categoryId+ " and " + userId);
         Category category =categoryRepository.updateCategoryById(userId,categoryId,request);
-
+        if(category == null){
+            throw new SearchNotFoundException("Category not found with id: " + categoryId + " not found.");
+        }
         return category;
     }
 
