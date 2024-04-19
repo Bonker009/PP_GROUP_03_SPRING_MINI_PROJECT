@@ -2,6 +2,7 @@ package org.example.miniprojectspring.service.ServiceImplementation;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.example.miniprojectspring.exception.SearchNotFoundException;
 import org.example.miniprojectspring.model.entity.Expense;
 import org.example.miniprojectspring.model.request.ExpenseRequest;
 import org.example.miniprojectspring.repository.ExpenseRepository;
@@ -24,7 +25,11 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public Expense findExpenseById(UUID id) {
-        return expenseRepository.getExpenseById(id);
+        Expense expense = expenseRepository.getExpenseById(id);
+        if (expense == null) {
+            throw new SearchNotFoundException("Expense not found with id: " + id + " not found.");
+        }
+        return expense;
     }
 
     @Override
@@ -34,11 +39,19 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public Expense updateExpenseById(UUID id, ExpenseRequest request) {
-        return expenseRepository.updateExpenseById(id,request);
+        Expense expense = expenseRepository.getExpenseById(id);
+        if (expense == null) {
+            throw new SearchNotFoundException("Expense not found with id: " + id + " not found.");
+        }
+        return expense;
     }
 
     @Override
     public Expense deleteExpenseById(UUID id) {
-        return expenseRepository.deleteExpenseById(id);
+        Expense expense = expenseRepository.deleteExpenseById(id);
+        if (expense == null) {
+            throw new SearchNotFoundException("Expense not found with id: " + id + " not found.");
+        }
+        return expense;
     }
 }

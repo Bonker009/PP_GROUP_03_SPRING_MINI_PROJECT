@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.example.miniprojectspring.exception.PageLimitException;
@@ -56,7 +57,7 @@ public class CategoryController {
 
     @PostMapping
     @Operation(summary = "Create new Category")
-    public ResponseEntity<?> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
@@ -68,7 +69,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update Category By Id")
-    public ResponseEntity<?> updateCategoryById(@PathVariable UUID id, @RequestBody CategoryRequest request) {
+    public ResponseEntity<?> updateCategoryById(@PathVariable UUID id,@Valid @RequestBody CategoryRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
