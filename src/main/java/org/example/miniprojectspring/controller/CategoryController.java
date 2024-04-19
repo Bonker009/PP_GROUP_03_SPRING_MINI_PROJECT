@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class CategoryController {
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
         List<Category> categoryList = categoryService.getAllCategories(userId, size, page);
 
-        ApiResponse<List<Category>> apiResponse = ApiResponse.<List<Category>>builder().message("Get all Categories successful").code(201).status(HttpStatus.OK).payload(categoryList).build();
+        ApiResponse<List<Category>> apiResponse = ApiResponse.<List<Category>>builder().message("Get all Categories successful").localDateTime(LocalDateTime.now()).code(201).status(HttpStatus.OK).payload(categoryList).build();
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -51,7 +52,7 @@ public class CategoryController {
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
         Category category = categoryService.getCategoryById(userId, id);
-        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().status(HttpStatus.OK).code(201).message("Get Category with Id : " + id + " successful").payload(category).build();
+        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().localDateTime(LocalDateTime.now()).status(HttpStatus.OK).code(201).message("Get Category with Id : " + id + " successful").payload(category).build();
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -63,7 +64,7 @@ public class CategoryController {
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
         System.out.println("User ID: " + userId);
         Category category = categoryService.postCategory(request, userId);
-        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().payload(category).status(HttpStatus.CREATED).code(201).message("Create new Category successful").build();
+        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().payload(category).localDateTime(LocalDateTime.now()).status(HttpStatus.CREATED).code(201).message("Create new Category successful").build();
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -74,7 +75,7 @@ public class CategoryController {
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
         Category category = categoryService.updateCategoryById(id, userId, request);
-        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().payload(category).message("Update a category with Id : " + id + " successful").status(HttpStatus.OK).code(201).build();
+        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().payload(category).localDateTime(LocalDateTime.now()).message("Update a category with Id : " + id + " successful").status(HttpStatus.OK).code(201).build();
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -83,7 +84,7 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategoryById(@PathVariable UUID id) {
         System.out.println(id + " in delete method of category");
         Category category = categoryService.deleteCategoryById(id);
-        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().payload(category).code(201).status(HttpStatus.OK).message("Delete a category with Id : " + id + " successful").build();
+        ApiResponse<Category> apiResponse = ApiResponse.<Category>builder().payload(category).localDateTime(LocalDateTime.now()).code(201).status(HttpStatus.OK).message("Delete a category with Id : " + id + " successful").build();
         return ResponseEntity.ok(apiResponse);
     }
 }

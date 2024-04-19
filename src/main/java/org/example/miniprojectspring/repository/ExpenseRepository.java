@@ -19,8 +19,6 @@ public interface ExpenseRepository {
             SELECT * FROM expenses WHERE user_id = #{userId}
             """)
     List<Expense> getAllExpenses(UUID userId,Integer page, Integer size);
-
-
     @Select("""
     SELECT * FROM expenses WHERE expense_id = #{expenseId}::uuid;
     """)

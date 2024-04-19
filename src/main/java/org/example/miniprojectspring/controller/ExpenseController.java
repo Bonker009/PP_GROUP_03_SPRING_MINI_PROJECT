@@ -31,18 +31,19 @@ public class ExpenseController {
     @GetMapping
     @Operation(summary = "Get All Expenses")
     public ResponseEntity<?> getAllExpense(@RequestParam(defaultValue = "5") @Positive(message = "size cannot be negative or 0") Integer size,
-                                           @RequestParam(defaultValue = "1") @Positive(message = "page cannot be negative or 0") Integer page,
-                                           @RequestParam(defaultValue = "expense_id") @NotBlank(message = "order by cannot be blank") String orderBy,
-                                           @RequestParam(defaultValue = "false") Boolean ascOrDesc
+                                           @RequestParam(defaultValue = "1") @Positive(message = "page cannot be negative or 0") Integer page
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
+
         List<Expense> expenseList = expenseService.getAllExpenses(userId,page,size);
         System.out.println(expenseList);
         ApiResponse<List<Expense>> apiResponse = ApiResponse.<List<Expense>>builder()
                 .status(HttpStatus.OK)
                 .payload(expenseList)
+                .localDateTime(LocalDateTime.now())
                 .message("Get all expenses successfully")
                 .code(201)
                 .build();
@@ -57,6 +58,7 @@ public class ExpenseController {
                 .payload(expense)
                 .message("Get Expense with Id : " + id + " successful")
                 .code(201)
+                .localDateTime(LocalDateTime.now())
                 .status(HttpStatus.OK)
                 .build();
         return ResponseEntity.ok(apiResponse);
@@ -73,6 +75,7 @@ public class ExpenseController {
                 .payload(expense)
                 .message("Created new Expense successfully")
                 .code(201)
+                .localDateTime(LocalDateTime.now())
                 .status(HttpStatus.CREATED)
                 .build();
         return ResponseEntity.ok(apiResponse);
@@ -86,6 +89,7 @@ public class ExpenseController {
                 .payload(expense)
                 .message("Get Expense with Id : " + id + " successful")
                 .code(201)
+                .localDateTime(LocalDateTime.now())
                 .status(HttpStatus.OK)
                 .build();
         return ResponseEntity.ok(apiResponse);

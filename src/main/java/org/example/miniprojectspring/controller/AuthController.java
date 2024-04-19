@@ -6,6 +6,7 @@ import org.apache.coyote.BadRequestException;
 import org.example.miniprojectspring.exception.CustomNotFoundException;
 import org.example.miniprojectspring.exception.OTPExpiredException;
 import org.example.miniprojectspring.exception.PasswordException;
+import org.example.miniprojectspring.exception.SearchNotFoundException;
 import org.example.miniprojectspring.model.dto.AppUserDTO;
 import org.example.miniprojectspring.model.dto.OptsDTO;
 import org.example.miniprojectspring.model.entity.CustomUserDetail;
@@ -32,6 +33,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,12 +54,12 @@ public class AuthController {
     @PutMapping("/verify")
     public ResponseEntity<?> verify(String OptCode) {
         OptsDTO optsDTO = optService.findByCode(OptCode);
-        System.out.println(optsDTO + " verify");
         ApiResponse<String> apiResponse = null;
         if (optsDTO != null) {
             apiResponse = ApiResponse.<String>builder()
                     .status(HttpStatus.OK)
                     .code(201)
+                    .localDateTime(LocalDateTime.now())
                     .message("Your opt has been sent to your email")
                     .payload("Successfully verified")
                     .build();
@@ -68,8 +70,13 @@ public class AuthController {
 
     @PutMapping("/forget")
     public ResponseEntity<?> forget(@RequestBody PasswordRequest passwordRequest, String email) throws PasswordException {
+
         if (!passwordRequest.getPassword().equals(passwordRequest.getConfirmPassword())) {
             throw new PasswordException("Your password is not matched");
+        }
+        AppUserDTO userDTO = appUserService.findUserByEmail(email);
+        if(userDTO== null){
+            throw new SearchNotFoundException("Email : " + email + " not found");
         }
         passwordRequest.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
         optService.resetPasswordByEmail(passwordRequest, email);
@@ -98,6 +105,7 @@ public class AuthController {
         ApiResponse<AppUserDTO> response = ApiResponse.<AppUserDTO>builder()
                 .message("Successfully Registered")
                 .code(201)
+                .localDateTime(LocalDateTime.now())
                 .status(HttpStatus.CREATED)
                 .payload(appUserDTO)
                 .build();
@@ -108,8 +116,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest) throws Exception {
-        System.out.println("login");
+
         AppUserDTO appUserDTO = appUserService.findUserByEmail(authRequest.getEmail());
+        if(appUserDTO == null){
+            throw new SearchNotFoundException("Email : " + authRequest.getEmail() + " not found");
+        }
         System.out.println(appUserDTO + " first in login");
         OptsDTO optsDTO = optService.findOptByUserId(appUserDTO.getUserId());
         System.out.println(optsDTO + " is verify");

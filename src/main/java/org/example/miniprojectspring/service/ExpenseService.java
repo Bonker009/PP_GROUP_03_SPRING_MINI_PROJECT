@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ExpenseService {
-    List<Expense> getAllExpenses(UUID userId,Integer page, Integer size);
+    List<Expense> getAllExpenses(UUID userId,Integer page, Integer sizetype);
 
     Expense findExpenseById(UUID id);
 

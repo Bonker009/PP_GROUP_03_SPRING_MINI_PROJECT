@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/files/")
@@ -33,6 +34,7 @@ public class AppFileController {
         ApiResponse<FileResponse> apiResponse = ApiResponse.<FileResponse>builder()
                 .status(HttpStatus.CREATED)
                 .code(201)
+                .localDateTime(LocalDateTime.now())
                 .message("File uploaded successfully")
                 .payload(fileResponse)
                 .build();
