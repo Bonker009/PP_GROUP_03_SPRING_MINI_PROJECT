@@ -1,5 +1,6 @@
 package org.example.miniprojectspring.service.ServiceImplementation;
 
+import org.example.miniprojectspring.exception.SearchNotFoundException;
 import org.example.miniprojectspring.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -33,7 +34,9 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Resource findFile(String filename) throws IOException {
-        Path rootPath = Paths.get("src/main/resources/image-profiles/" + filename);
-        return new ByteArrayResource(Files.readAllBytes(rootPath));
+       if (Files.exists(path.resolve(filename))) {
+           return new ByteArrayResource(Files.readAllBytes(path.resolve(filename)));
+       }
+        throw new SearchNotFoundException("File not found with name: " + filename + " not found.");
     }
 }
