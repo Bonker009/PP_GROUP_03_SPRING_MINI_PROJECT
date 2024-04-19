@@ -12,7 +12,7 @@ import java.util.UUID;
 public class AppUserDTO{
     private UUID userId;
     private String email;
-//    @JsonIgnore
+    @JsonIgnore
     private String password;
     private String profileImage;
 }

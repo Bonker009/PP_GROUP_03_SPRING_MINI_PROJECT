@@ -38,7 +38,6 @@ public ProblemDetail handlerAllNotFoundException(SearchNotFoundException e) {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         HashMap<String, String> errors = new HashMap<>();
-
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }

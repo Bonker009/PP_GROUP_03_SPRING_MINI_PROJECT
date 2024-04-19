@@ -3,10 +3,12 @@ package org.example.miniprojectspring.controller;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.example.miniprojectspring.exception.CustomNotFoundException;
 import org.example.miniprojectspring.exception.OTPExpiredException;
 import org.example.miniprojectspring.exception.PasswordException;
 import org.example.miniprojectspring.model.dto.AppUserDTO;
 import org.example.miniprojectspring.model.dto.OptsDTO;
+import org.example.miniprojectspring.model.entity.CustomUserDetail;
 import org.example.miniprojectspring.model.request.AppUserRequest;
 import org.example.miniprojectspring.model.request.AuthRequest;
 import org.example.miniprojectspring.model.request.PasswordRequest;
@@ -23,6 +25,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +34,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RequestMapping("/api/v1/auths")
 @RestController
@@ -39,31 +45,24 @@ public class AuthController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-
     private final EmailService emailService;
     private final OptService optService;
 
 
     @PutMapping("/verify")
     public ResponseEntity<?> verify(String OptCode) {
-        Optional<OptsDTO> optional = optService.findByCode(OptCode);
-        optional.ifPresent(c -> {
-            if (c.getExpiration().before(new Date())) {
-                try {
-                    throw new OTPExpiredException("Opt is expired");
-                } catch (OTPExpiredException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                optService.verify(OptCode);
-            }
-        });
-        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status(HttpStatus.OK)
-                .code(201)
-                .message("Your email is verified")
-                .payload("Successfully verified")
-                .build();
+        OptsDTO optsDTO = optService.findByCode(OptCode);
+        System.out.println(optsDTO + " verify");
+        ApiResponse<String> apiResponse = null;
+        if (optsDTO != null) {
+            apiResponse = ApiResponse.<String>builder()
+                    .status(HttpStatus.OK)
+                    .code(201)
+                    .message("Your opt has been sent to your email")
+                    .payload("Successfully verified")
+                    .build();
+            optService.verify(OptCode);
+        }
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -74,15 +73,16 @@ public class AuthController {
         }
         passwordRequest.setPassword(passwordEncoder.encode(passwordRequest.getPassword()));
         optService.resetPasswordByEmail(passwordRequest, email);
-        ApiResponse<String> apiResponse = ApiResponse.<String>builder().payload("Password Reseted").message("Password resetted successfully").code(201).status(HttpStatus.OK).build();
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder().payload("Password Reset").message("Password Reset successfully").code(201).status(HttpStatus.OK).build();
         return ResponseEntity.ok(apiResponse);
 
     }
 
     @PostMapping("resend")
-    public ResponseEntity<?> resend(@RequestBody PasswordRequest passwordRequest) throws PasswordException {
-
-        return ResponseEntity.ok("sdf");
+    public ResponseEntity<?> resend(String email) throws MessagingException, IOException {
+        optService.resendOpt(email);
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder().message("The opt has been resetted to the email. Please check your mail").code(201).status(HttpStatus.OK).payload("Sent to the email").build();
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("register")
@@ -108,13 +108,21 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequest authRequest) throws Exception {
+        System.out.println("login");
+        AppUserDTO appUserDTO = appUserService.findUserByEmail(authRequest.getEmail());
+        System.out.println(appUserDTO + " first in login");
+        OptsDTO optsDTO = optService.findOptByUserId(appUserDTO.getUserId());
+        System.out.println(optsDTO + " is verify");
+        if (optsDTO.isVerify()) {
+            System.out.println(optsDTO.isVerify());
+            authenticate(authRequest.getEmail(), authRequest.getPassword());
+            final UserDetails userDetails = appUserService.loadUserByUsername(authRequest.getEmail());
+            final String token = jwtService.generateToken(userDetails);
+            AuthResponse authResponse = new AuthResponse(token);
 
-        authenticate(authRequest.getEmail(), authRequest.getPassword());
-        final UserDetails userDetails = appUserService.loadUserByUsername(authRequest.getEmail());
-        final String token = jwtService.generateToken(userDetails);
-        AuthResponse authResponse = new AuthResponse(token);
-
-        return ResponseEntity.ok(authResponse);
+            return ResponseEntity.ok(authResponse);
+        }
+        return ResponseEntity.ok("Your email is not verified");
     }
 
     private void authenticate(String email, String password) throws Exception {

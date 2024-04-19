@@ -15,7 +15,6 @@ public class Category {
     private UUID categoryId;
     private String name;
     private String description;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private AppUserDTO userDTO;
 
 }
