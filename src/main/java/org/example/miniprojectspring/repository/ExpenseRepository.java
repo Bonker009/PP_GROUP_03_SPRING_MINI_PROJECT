@@ -5,8 +5,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.example.miniprojectspring.configuration.UUIDTypeHandler;
 import org.example.miniprojectspring.model.entity.Expense;
 import org.example.miniprojectspring.model.request.ExpenseRequest;
-import org.springframework.security.access.method.P;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +35,13 @@ public interface ExpenseRepository {
     @ResultMap("expenseMapping")
     Expense createExpense(@Param("expenses") ExpenseRequest request,UUID userId);
 
+    @Select("""
+            UPDATE expenses
+            SET amount = #{request.amount}, description = #{request.description}, date = #{request.date}, category_id = #{request.categoryId}
+            WHERE expense_id = #{id}
+            RETURNING *
+""")
+    @ResultMap("expenseMapping")
     Expense updateExpenseById(UUID id, ExpenseRequest request);
 
     Expense deleteExpenseById(UUID id);
