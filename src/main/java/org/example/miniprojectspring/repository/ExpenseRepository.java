@@ -5,6 +5,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.example.miniprojectspring.configuration.UUIDTypeHandler;
 import org.example.miniprojectspring.model.entity.Expense;
 import org.example.miniprojectspring.model.request.ExpenseRequest;
+import org.springframework.security.access.method.P;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,11 +22,6 @@ public interface ExpenseRepository {
             """)
     List<Expense> getAllExpenses(UUID userId,Integer page, Integer size);
 
-//    @Select("""
-//    SELECT * FROM expenses WHERE expense_id= #{expenseId}::uuid;
-//    """)
-//    @ResultMap("expensesMapping")
-//    Expense findExpenseById(@Param("expenseId") UUID expenseId);
 
     @Select("""
     SELECT * FROM expenses WHERE expense_id = #{expenseId}::uuid;
@@ -33,7 +29,13 @@ public interface ExpenseRepository {
     @ResultMap("expenseMapping")
     Expense getExpenseById(@Param("expenseId") UUID expenseId);
 
-    Expense createExpense(ExpenseRequest request);
+    @Select("""
+    INSERT INTO expenses (amount, description, date, user_id, category_id) 
+     VALUES (#{expenses.amount}, #{expenses.description}, #{expenses.date}, #{userId}, #{expenses.categoryId})
+     RETURNING *
+    """)
+    @ResultMap("expenseMapping")
+    Expense createExpense(@Param("expenses") ExpenseRequest request,UUID userId);
 
     Expense updateExpenseById(UUID id, ExpenseRequest request);
 
