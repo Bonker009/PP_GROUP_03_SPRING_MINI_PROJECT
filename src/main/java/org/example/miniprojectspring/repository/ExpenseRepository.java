@@ -25,7 +25,7 @@ public interface ExpenseRepository {
     SELECT * FROM expenses WHERE expense_id = #{expenseId}::uuid;
     """)
     @ResultMap("expenseMapping")
-    Expense getExpenseById(@Param("expenseId") UUID expenseId);
+    Expense getExpenseById (@Param("expenseId") UUID expenseId);
 
     @Select("""
     INSERT INTO expenses (amount, description, date, user_id, category_id) 
@@ -44,5 +44,10 @@ public interface ExpenseRepository {
     @ResultMap("expenseMapping")
     Expense updateExpenseById(UUID id, ExpenseRequest request);
 
-    Expense deleteExpenseById(UUID id);
+    @Select("""
+    DELETE FROM expenses WHERE expense_id = #{expenseId}::uuid 
+    RETURNING *
+    """)
+    @ResultMap("expenseMapping")
+    Expense deleteExpenseById( @Param("expenseId") UUID expenseId);
 }

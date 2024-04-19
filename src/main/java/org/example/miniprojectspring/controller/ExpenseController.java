@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,12 +93,13 @@ public class ExpenseController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Expense By Id")
     public ResponseEntity<?> deleteExpenseById(@PathVariable UUID id) {
-        Expense expense = expenseService.deleteExpenseById(id);
+         expenseService.deleteExpenseById(id);
         ApiResponse<Expense> apiResponse = ApiResponse.<Expense>builder()
-                .payload(expense)
-                .message("Get Expense with Id : " + id + " successful")
+                .payload(null)
+                .message(" Expense with Id : " + id + "has been removed successful.")
                 .code(201)
                 .status(HttpStatus.OK)
+                .localDateTime(LocalDateTime.now())
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
