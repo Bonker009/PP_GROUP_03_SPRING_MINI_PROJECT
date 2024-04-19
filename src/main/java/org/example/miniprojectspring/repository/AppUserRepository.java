@@ -32,7 +32,7 @@ public interface AppUserRepository {
 
 
     @Select("""
-            SELECT * FROM users WHERE user_id = #{userId}::uuid
+            SELECT * FROM users WHERE user_id = #{userId}
             """)
     @ResultMap("userMapping")
     AppUserDTO findUserById(UUID userId);

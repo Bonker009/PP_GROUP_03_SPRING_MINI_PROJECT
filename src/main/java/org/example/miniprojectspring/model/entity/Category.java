@@ -1,5 +1,6 @@
 package org.example.miniprojectspring.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class Category {
     private UUID categoryId;
     private String name;
     private String description;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private AppUserDTO userDTO;
 
 }
