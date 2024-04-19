@@ -28,8 +28,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense postExpense(ExpenseRequest request) {
-        return expenseRepository.createExpense(request);
+    public Expense postExpense(ExpenseRequest request,UUID userId) {
+        return expenseRepository.createExpense(request,userId);
     }
 
     @Override

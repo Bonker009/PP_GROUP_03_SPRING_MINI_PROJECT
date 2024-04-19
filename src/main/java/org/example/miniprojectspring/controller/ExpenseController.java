@@ -63,7 +63,10 @@ public class ExpenseController {
     @PostMapping
     @Operation(summary = "Create new Expense")
     public ResponseEntity<?> createExpense(@RequestBody ExpenseRequest request) {
-        Expense expense = expenseService.postExpense(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+        UUID userId = customUserDetail.getAppUserDTO().getUserId();
+        Expense expense = expenseService.postExpense(request,userId);
         ApiResponse<Expense> apiResponse = ApiResponse.<Expense>builder()
                 .payload(expense)
                 .message("Created new Expense successfully")

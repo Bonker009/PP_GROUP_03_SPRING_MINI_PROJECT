@@ -11,7 +11,7 @@ public interface ExpenseService {
 
     Expense findExpenseById(UUID id);
 
-    Expense postExpense(ExpenseRequest request);
+    Expense postExpense(ExpenseRequest request,UUID userId);
 
     Expense updateExpenseById(UUID id,ExpenseRequest request);
 
