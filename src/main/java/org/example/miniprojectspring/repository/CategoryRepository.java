@@ -18,8 +18,9 @@ public interface CategoryRepository {
                     one = @One(select = "org.example.miniprojectspring.repository.AppUserRepository.findUserById")
             )
     })
+
     @Select("""
-                SELECT * FROM categories WHERE category_id = #{categoryId} AND user_id = #{userId}
+                SELECT * FROM categories WHERE category_id = #{categoryId} 
             """)
     Category getCategoryById(UUID userId,@Param("categoryId") UUID categoryId);
 
@@ -46,4 +47,11 @@ public interface CategoryRepository {
             """)
     @ResultMap("category")
     List<Category> getAllCategories(UUID userID, Integer size, Integer page);
+
+
+    @Select("""
+    SELECT * FROM categories WHERE category_id = #{categoryId}
+""")
+    @ResultMap("category")
+    Category getCategoryByCategoryId(UUID categoryId);
 }

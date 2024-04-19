@@ -14,14 +14,13 @@ public interface ExpenseRepository {
     @Results(id = "expenseMapping", value = {
             @Result(property = "expenseId" , column = "expense_id",jdbcType = JdbcType.OTHER,javaType = UUID.class, typeHandler = UUIDTypeHandler.class),
             @Result(property = "appUserDTO",column = "user_id", one = @One(select = "org.example.miniprojectspring.repository.AppUserRepository.findUserById")),
-            @Result(property = "category",column = "category_id", one = @One(select = "org.example.miniprojectspring.repository.CategoryRepository.getCategoryById"))
+            @Result(property = "category",column = "category_id", one = @One(select = "org.example.miniprojectspring.repository.CategoryRepository.getCategoryByCategoryId"))
     })
     @Select("""
-            SELECT * FROM expenses WHERE user_id = #{userId} 
+            SELECT * FROM expenses WHERE user_id = #{userId}
             """)
 
     List<Expense> getAllExpenses(UUID userId,Integer page, Integer size);
-
 
     Expense getExpenseById(UUID id);
 

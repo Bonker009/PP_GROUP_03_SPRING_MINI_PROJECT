@@ -37,6 +37,7 @@ public class ExpenseController {
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();
         List<Expense> expenseList = expenseService.getAllExpenses(userId,page,size);
+        System.out.println(expenseList);
         ApiResponse<List<Expense>> apiResponse = ApiResponse.<List<Expense>>builder()
                 .status(HttpStatus.OK)
                 .payload(expenseList)

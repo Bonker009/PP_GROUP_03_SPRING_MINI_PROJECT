@@ -18,6 +18,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     @Override
     public List<Expense> getAllExpenses(UUID userId,Integer page, Integer size) {
+        System.out.println(expenseRepository.getAllExpenses(userId,page,size));
         return expenseRepository.getAllExpenses(userId,page,size);
     }
 
