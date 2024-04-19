@@ -7,8 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
-import org.example.miniprojectspring.exception.PageLimitException;
-import org.example.miniprojectspring.exception.SearchNotFoundException;
+
 import org.example.miniprojectspring.model.entity.Category;
 import org.example.miniprojectspring.model.entity.CustomUserDetail;
 import org.example.miniprojectspring.model.request.CategoryRequest;
@@ -35,7 +34,7 @@ public class CategoryController {
     @GetMapping
     @Operation(summary = "Get All Categories")
     public ResponseEntity<?> getAllCategory(@RequestParam(defaultValue = "3") @Positive(message = "size cannot be negative or 0") Integer size,
-                                            @RequestParam(defaultValue = "1") @Positive(message = "Page cannot be negative or 0") Integer page) throws SearchNotFoundException, PageLimitException {
+                                            @RequestParam(defaultValue = "1") @Positive(message = "Page cannot be negative or 0") Integer page) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         UUID userId = customUserDetail.getAppUserDTO().getUserId();

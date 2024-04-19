@@ -4,7 +4,6 @@ import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.example.miniprojectspring.exception.CustomNotFoundException;
-import org.example.miniprojectspring.exception.OTPExpiredException;
 import org.example.miniprojectspring.exception.PasswordException;
 import org.example.miniprojectspring.exception.SearchNotFoundException;
 import org.example.miniprojectspring.model.dto.AppUserDTO;
@@ -69,10 +68,10 @@ public class AuthController {
     }
 
     @PutMapping("/forget")
-    public ResponseEntity<?> forget(@RequestBody PasswordRequest passwordRequest, String email) throws PasswordException {
+    public ResponseEntity<?> forget(@RequestBody PasswordRequest passwordRequest, String email) {
 
         if (!passwordRequest.getPassword().equals(passwordRequest.getConfirmPassword())) {
-            throw new PasswordException("Your password is not matched");
+            throw new PasswordException("password is not matched");
         }
         AppUserDTO userDTO = appUserService.findUserByEmail(email);
         if(userDTO== null){
